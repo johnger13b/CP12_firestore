@@ -19,7 +19,12 @@ class _State extends State<ContentPage> {
     super.initState();
     _textController = TextEditingController();
     controller = Get.find();
-    // TODO: Obten los ToDos de la base de datos usando el controller y actualiza el estado
+    // TO DO: Obten los ToDos de la base de datos usando el controller y actualiza el estado
+    controller.readAll().then((value) {
+      setState(() {
+        controller.toDos = value;
+      });
+    });
   }
 
   @override
@@ -49,8 +54,14 @@ class _State extends State<ContentPage> {
                   ElevatedButton(
                       onPressed: () {
                         final toDo = ToDo(content: _textController.text);
-                        // TODO: 1. Guarda el todo en la base de datos con el controlador.
-                        // TODO: 2. Actualiza el estado.
+                        // TO DO: 1. Guarda el todo en la base de datos con el controlador.
+                        controller.saveToDo(data: toDo).then((_) {
+                          // TO DO: 2. Actualiza el estado de la lista de ToDos.
+                          setState(() {
+                            _textController.clear();
+                            controller.toDos.add(toDo);
+                          });
+                        });
                       },
                       child: const Text("Aceptar"))
                 ],
@@ -75,16 +86,26 @@ class _State extends State<ContentPage> {
                             ),
                             onPressed: () {
                               toDo.completed = true;
-                              // TODO: 1. Actualiza el toDo en la base de datos usando el controlador.
-                              // TODO: 2. Actualiza el estado.
+                              // TO DO: 1. Actualiza el toDo en la base de datos usando el controlador.
+                              controller.updateToDo(data: toDo).then((values) {
+                                // TO DO: 2. Actualiza el estado de la lista de ToDos.
+                                setState(() {
+                                  controller.toDos[index] = toDo;
+                                });
+                              });
                             },
                           ),
                         ),
                         title: Text(toDo.content),
                         trailing: IconButton(
                           onPressed: () {
-                            // TODO: 1. Elimina el toDo de la base de datos usando el controlador.
-                            // TODO: 2. Actualiza el estado.
+                            // TO DO: 1. Elimina el toDo de la base de datos usando el controlador.
+                            controller.deleteToDo(uuid: toDo.uuid).then((_) {
+                              // TO DO: 2. Actualiza el estado.
+                              setState(() {
+                                controller.toDos.removeAt(index);
+                              });
+                            });
                           },
                           icon: const Icon(
                             Icons.delete_forever_rounded,
@@ -99,8 +120,13 @@ class _State extends State<ContentPage> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.delete_sweep_rounded),
         onPressed: () {
-          // TODO: 1. Elimina los ToDOs de la base de datos usando el controlador.
-          // TODO: 2. Actualiza el estado.
+          // TO DO: 1. Elimina los ToDOs de la base de datos usando el controlador.
+          controller.clear(controller.toDos).then((_) {
+            // TO DO: 2. Actualiza el estado.
+            setState(() {
+              controller.toDos.clear();
+            });
+          });
         },
       ),
     );

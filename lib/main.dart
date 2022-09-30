@@ -7,7 +7,8 @@ import 'package:misiontic_todo/ui/app.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // TODO: Inicializa Firebase usando el archivo de opciones creado por flutterfire
+  // TO DO: Inicializa Firebase usando el archivo de opciones creado por flutterfire
+  await Firebase.initializeApp();
   Get.put(DatabaseController());
   runApp(const ToDoApp());
 }
